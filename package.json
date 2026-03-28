@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "description": "NPRIME SDK INTEGRATION",
   "source": "./src/index.tsx",
-  "main": "./lib/commonjs/index.js",
-  "module": "./lib/module/index.js",
+  "main": "./src/index.tsx",
+  "module": "./src/index.tsx",
   "exports": {
     ".": {
       "import": {
@@ -41,7 +41,7 @@
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
-    "prepare": "bob build",
+    "prepare": "",
     "release": "release-it"
   },
   "keywords": [
