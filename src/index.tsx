@@ -1,51 +1,69 @@
 import { NativeModules, Platform } from 'react-native';
 
 const LINKING_ERROR =
-  `The package 'react-native-nprime-face' doesn't seem to be linked. \n\n` +
-  Platform.select({ ios: "- run 'pod install'\n", default: '' }) +
-  '- Rebuild the app\n';
+  `The package 'react-native-nprime-face' doesn't seem to be linked. Make sure: \n\n` +
+  Platform.select({ ios: "- You have run 'pod install'\n", default: '' }) +
+  '- You rebuilt the app after installing the package\n' +
+  '- You are not using Expo Go\n';
 
-
+// Protects against silent crashes if the Native Module isn't linked properlys
 const NprFaceModule = NativeModules.NprFaceModule
   ? NativeModules.NprFaceModule
-  : new Proxy({}, { get() { throw new Error(LINKING_ERROR); } });
+  : new Proxy(
+      {},
+      {
+        get() {
+          throw new Error(LINKING_ERROR);
+        },
+      }
+    );
 
-
-export function configure(...args: any[]): Promise<boolean> {
-  if (args.length === 0 || args[0] === undefined) {
-    console.warn("[NPrime] Skipping init: No arguments provided.");
-    return Promise.resolve(false);
-  }
-
+/**
+ * Initializes the SDK. 
+ * Accepts a config object from Inji but ignores it to call the 0-arg Java method.
+ */
+export async function configure(config?: any): Promise<boolean> {
   try {
-    
-    return NprFaceModule.configure(...args);
-  } catch (err) {
-    console.error("[NPrime] Native configuration failed", err);
-    return Promise.resolve(false);
+    const initStatus = await NprFaceModule.configure();
+    return initStatus; 
+  } catch (e) {
+    console.error('NPrime init failed', e);
+    return false;
   }
 }
 
-
+/**
+ * Performs Face Capture and Comparison.
+ * Hardcoded to use the Front Camera.
+ */
 export async function faceCompare(
-  cameraSwitch: boolean,
-  livenessSwitch: boolean,
-  vcImage: string,
-  cameraMode: number = 1
+  rearCamera: boolean, // Parameter kept for compatibility with Inji calls
+  liveness: boolean,
+  vcImage: string
 ): Promise<boolean> {
   try {
-   
-    const capturedTemplate = await NprFaceModule.captureFace(cameraSwitch, livenessSwitch, cameraMode);
-    
-    if (!capturedTemplate) {
-      console.log("[NPrime] Capture returned null or empty.");
+    // --- STEP 1: Capture the Face ---
+    // 👇 FIX: We pass 'false' instead of 'rearCamera' to force Front Camera (ID 1)
+    const capturedTemplate = await NprFaceModule.captureFace(
+      false, 
+      liveness,
+      1 // 1 - GUIDED CAPTURE
+    );
+
+    if (!capturedTemplate || capturedTemplate === '') {
+      console.error('NPrime Face capture failed or was cancelled');
       return false;
     }
 
+    // --- STEP 2: Compare with VC Image ---
+    const status = await NprFaceModule.generateAndIdentifyTemplates(
+      capturedTemplate,
+      vcImage
+    );
     
-    return await NprFaceModule.generateAndIdentifyTemplates(capturedTemplate, vcImage);
-  } catch (error) {
-    console.error("Face compare error:", error);
+    return status;
+  } catch (e) {
+    console.error('NPrime Face comparison failed', e);
     return false;
   }
 }
