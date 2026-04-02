@@ -33,11 +33,9 @@ public class NprFaceModule extends ReactContextBaseJavaModule implements Activit
     private static final int CAPTURE_REQUEST_CODE = 1001;
     private static final int GENERATE_AND_IDENTIFY_REQUEST_CODE = 1002;
 
-    // SharedPreferences keys
     private static final String PREF_NAME = "NPrimePrefs";
     private static final String PREF_KEY_INITIALIZED = "isInitialized";
 
-    //  Runtime cache — avoids SharedPreferences read on every call
     private static boolean isInitialized = false;
 
     private Promise capturePromise;
@@ -49,17 +47,14 @@ public class NprFaceModule extends ReactContextBaseJavaModule implements Activit
         reactContext = context;
         reactContext.addActivityEventListener(this);
 
-        //  On module load, restore persisted state from SharedPreferences
         isInitialized = getPrefs().getBoolean(PREF_KEY_INITIALIZED, false);
         Log.d("NPR_JAVA_SHIELD", "Module loaded. isInitialized from storage = " + isInitialized);
     }
 
-    //  Helper to get SharedPreferences
     private SharedPreferences getPrefs() {
         return reactContext.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
-    //  Helper to persist initialized state
     private void saveInitialized(boolean value) {
         getPrefs().edit().putBoolean(PREF_KEY_INITIALIZED, value).apply();
         isInitialized = value;
@@ -74,7 +69,6 @@ public class NprFaceModule extends ReactContextBaseJavaModule implements Activit
 
     @ReactMethod
     public void configure(Promise promise) {
-        // Already initialized (even after app kill) — skip popup forever
         if (isInitialized) {
             Log.d("NPR_JAVA_SHIELD", "Already initialized (persisted). Skipping popup.");
             promise.resolve(true);
@@ -217,23 +211,39 @@ public class NprFaceModule extends ReactContextBaseJavaModule implements Activit
             try {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     byte[] sdkResponseBytes = data.getByteArrayExtra("response");
+
+                    // ✅ DEBUG: Check if response bytes exist
+                    if (sdkResponseBytes == null) {
+                        Log.e("NPR_DEBUG", "sdkResponseBytes is NULL!");
+                        initPromise.resolve(false);
+                        return;
+                    }
+
                     SdkResponse<InitResponse> response = new ObjectMapper()
                             .readValue(sdkResponseBytes, new TypeReference<SdkResponse<InitResponse>>() {});
 
+                    // ✅ DEBUG: Log exact response from SDK
+                    Log.d("NPR_DEBUG", "getResponse() = " + response.getResponse());
+                    Log.d("NPR_DEBUG", "isInitSuccessful() = " +
+                        (response.getResponse() != null ? response.getResponse().isInitSuccessful() : "RESPONSE IS NULL"));
+
                     boolean success = response.getResponse() != null && response.getResponse().isInitSuccessful();
 
-                    //  Save to SharedPreferences — persists across app kills forever
                     if (success) {
                         saveInitialized(true);
-                        Log.d("NPR_JAVA_SHIELD", "NPrime initialized & saved. Popup will NEVER show again.");
+                        Log.d("NPR_DEBUG", "SUCCESS — isInitialized saved! Popup will never show again.");
+                    } else {
+                        Log.e("NPR_DEBUG", "FAILED — isInitSuccessful() returned false or response is null");
                     }
 
                     initPromise.resolve(success);
                 } else {
+                    // ✅ DEBUG: Log why it failed
+                    Log.e("NPR_DEBUG", "resultCode not OK or data is null. resultCode = " + resultCode);
                     initPromise.resolve(false);
                 }
             } catch (Exception e) {
-                Log.e("NPR_ERROR", "Init result error", e);
+                Log.e("NPR_DEBUG", "Exception during init: " + e.getMessage());
                 initPromise.resolve(false);
             } finally {
                 initPromise = null;
