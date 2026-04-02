@@ -21,7 +21,6 @@ import in.nprime.injisdk.dto.CaptureRequest;
 import in.nprime.injisdk.dto.CaptureResponse;
 import in.nprime.injisdk.dto.InitRequest;
 import in.nprime.injisdk.dto.InitResponse;
-import in.nprime.injisdk.dto.SdkRequest;
 import in.nprime.injisdk.dto.SdkResponse;
 import in.nprime.injisdk.Constants.CaptureMode;
 import in.nprime.injisdk.dto.GenerateAndIdentifyTemplateRequest;
