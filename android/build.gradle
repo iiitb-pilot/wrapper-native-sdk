@@ -5,9 +5,6 @@ buildscript {
   repositories {
     mavenCentral()
     google()
-	flatDir {
-        dirs "${projectDir}/libs"
-    }
   }
 
   dependencies {
@@ -94,14 +91,16 @@ android {
   }
 } // CORRECT: The android block finally closes here
 
-repositories {
+  // CORRECT: flatDir is now in the main repository block
+  repositories {
   mavenCentral()
   google()
-  // CORRECT: flatDir is now in the main repository block
   flatDir {
-    dirs 'libs' 
+    dirs 'libs',
+         "${project.rootDir}/../node_modules/react-native-nprime-face/android/libs"
   }
 }
+
 
 def kotlin_version = getExtOrDefault("kotlinVersion")
 
