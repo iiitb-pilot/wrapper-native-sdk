@@ -96,8 +96,7 @@ android {
   mavenCentral()
   google()
   flatDir {
-    dirs 'libs',
-         "${project.rootDir}/../node_modules/react-native-nprime-face/android/libs"
+    dirs 'libs', "${projectDir}/libs"
   }
 }
 
@@ -110,7 +109,7 @@ dependencies {
   //noinspection GradleDynamicVersion
   compileOnly 'com.quickbirdstudios:opencv:4.5.3.0'
   implementation(name: 'injifacesdk', ext: 'aar')
-  implementation 'com.quickbirdstudios:opencv:4.5.3.0'
+ 
     
   implementation "com.fasterxml.jackson.core:jackson-databind:2.14.0"
   implementation "com.fasterxml.jackson.core:jackson-core:2.14.0"
