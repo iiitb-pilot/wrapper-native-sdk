@@ -46,7 +46,7 @@ async function ensureInit(): Promise<boolean> {
  *  FINAL FACE COMPARE FUNCTION
  */
 export async function faceCompare(
-  rearCamera: boolean, // kept for compatibility (ignored)
+  _rearCamera: boolean, // kept for compatibility (ignored)
   liveness: boolean,
   vcImage: string
 ): Promise<boolean> {
@@ -61,9 +61,9 @@ export async function faceCompare(
 
     // 🔹 STEP 1: Capture Face (force FRONT camera)
     const capturedTemplate = await NprFaceModule.captureFace(
-      false,        // force front camera
+      false, // force front camera
       liveness,
-      1             // GUIDED_CAPTURE
+      1 // GUIDED_CAPTURE
     );
 
     if (!capturedTemplate || capturedTemplate === '') {
@@ -84,7 +84,6 @@ export async function faceCompare(
     }
 
     return matchResult;
-
   } catch (e) {
     console.error('NPrime: Face comparison error', e);
     return false;
