@@ -53,18 +53,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/suraj/react-native-nprime-face.git"
+    "url": "git+https://github.com/iiitb-pilot/wrapper-native-sdk.git"
   },
-  "author": "Suraj <surajmurgude@gmail.com> (https://github.com/suraj)",
+  "author": "MOSIP",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/suraj/react-native-nprime-face/issues"
+    "url": "https://github.com/iiitb-pilot/wrapper-native-sdk/issues"
   },
-  "homepage": "https://github.com/suraj/react-native-nprime-face#readme",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public"
-  },
+  "homepage": "https://github.com/iiitb-pilot/wrapper-native-sdk#readme",
   "devDependencies": {
     "@commitlint/config-conventional": "^17.0.2",
     "@evilmartians/lefthook": "^1.5.0",
@@ -115,7 +111,7 @@
       "tagName": "v${version}"
     },
     "npm": {
-      "publish": true
+      "publish": false
     },
     "github": {
       "release": true
