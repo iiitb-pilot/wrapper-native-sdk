@@ -57,8 +57,8 @@ public class NprFaceModule extends ReactContextBaseJavaModule implements Activit
             //  LICENSE CONFIG
             String initJson = "{"
                     + "\"request\":{"
-                    + "\"license_code\":\"NPRIMEINJI-48279\","
-                    + "\"customer_ref\":\"MOSIPMECB\""
+                    + "\"license_code\":\"NPRIMEINJI-48379\","
+                    + "\"customer_ref\":\"GABONINJIPILOT\""
                     + "},"
                     + "\"timestamp\":\"\""
                     + "}";
@@ -157,7 +157,7 @@ public class NprFaceModule extends ReactContextBaseJavaModule implements Activit
                         success = response.getResponse().isInitSuccessful();
                     }
 
-                    // 🔥 DEBUG LOG (VERY IMPORTANT)
+                    // DEBUG LOG (VERY IMPORTANT)
                     if (response.getSdkError() != null) {
                         Log.e("NPR_ERROR",
                                 response.getSdkError().getErrorCode() + " : "
