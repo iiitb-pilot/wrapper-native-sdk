@@ -120,7 +120,7 @@ public class NprFaceModule extends ReactContextBaseJavaModule implements Activit
 
             String json = "{"
                     + "\"request\":{"
-                    + "\"trustLevel\":\"Low\","
+                    + "\"trustlevel\":\"Low\","
                     + "\"capturedTemplateData\":\"" + template + "\","
                     + "\"vcImageData\":\"" + vcImage + "\""
                     + "},"
